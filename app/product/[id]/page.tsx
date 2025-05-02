@@ -1,0 +1,97 @@
+import db from "@/lib/db";
+import getSession from "@/lib/session";
+import { notFound } from "next/navigation";
+import {UserIcon} from "@heroicons/react/24/solid"
+import Link from "next/link";
+import { formatToWon } from "@/lib/utils";
+import Image from "next/image";
+import {DeletePro} from "../[id]/action"
+
+
+
+async function getIsOwner(userId:number){
+    const session = await getSession();
+    if(session.id){
+        return session.id === userId
+    }
+    return false;
+}
+async function getProduct(id:number){
+    const product = await db.product.findUnique({
+        where:{
+            id,
+        },
+        include:{
+            user:{
+                select:{
+                    username:true,
+                    avatar:true,
+                }
+            }
+        },
+    })
+    return product
+}
+
+export default async function ProductDetail({params}:{
+    params:{id:string}
+}) {
+    const id = Number(params.id)
+    if(isNaN(id)){
+        return notFound()
+    }
+    const product = await getProduct(id);
+    if(!product){
+        return notFound();
+    }
+    const IsOwner = await getIsOwner(product.userId)
+    return (
+        <div>
+        <div className="relative aspect-square">
+            <Image fill className="object-cover" src={product.photo} alt={product.title}/>
+        </div>
+        <div className="py-5 px-3 flex items-center gap-3 
+        border-b border-neutral-700">
+            <div className="size-10 rounded-full ">
+                {product.user.avatar ? (
+                    <Image
+                    src={product.user.avatar}
+                    width={40}
+                    height={40}
+                    alt="User Avatar"
+                    className="object-cover rounded-full"
+                    />
+                ) : (
+                    <UserIcon/>
+                )}
+                </div>
+            <div >
+                <Link href="/profile">
+                    <h3 className="text-white font-semibold">
+                        {product.user.username}
+                    </h3>
+                    </Link>
+            </div>
+        </div>
+        <div className="py-3 px-3">
+            <h1 className="text-2xl font-semibold py-1">{product.title}</h1>
+            <p>{product.description}</p>
+        </div>
+        <div className="fixed bottom-0 left-1/2 -translate-x-1/2 p-5 h-13
+            bg-neutral-800 flex justify-between items-center w-[90%] max-w-md rounded-lg shadow">
+            <span className="font-semibold">{formatToWon(product.price)}원</span>
+            <div className="flex items-center gap-2">
+            {IsOwner ? (
+                <form action={DeletePro}>
+                    <input type="hidden" name="id" value={product.id} />
+                    <button className="bg-red-500 text-white px-5 py-2.5 rounded-md">삭제하기</button>
+                </form>
+            ) : null}
+            <Link className="bg-orange-500 text-white px-5 py-2.5 rounded-md" href="/chats">채팅하기</Link>
+            </div>
+        </div>
+        </div>
+    );
+  }
+  //만들어 볼만한것것
+  //1. 상대방 이름 누르면 그 사람 프로필로 가는거

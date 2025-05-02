@@ -20,7 +20,7 @@ export default function TabBar(){
 
     return (
         <div className="fixed bottom-0 grid grid-cols-5 border-t 
-            border-neutral-600 px-5 py-3 *:text-white">
+            border-neutral-600 px-5 py-3 *:text-white bg-neutral-800">
             <Link href="/products" className="tab">
             {pathname ==="/products" ?
                 <SolidHomeIcon className="w-7 h-7"/>: 

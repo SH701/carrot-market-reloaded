@@ -1,60 +1,31 @@
-import ListProduct from "@/components/list-product";
+import ProductList from "@/components/product-list";
 import db from "@/lib/db";
+import { Prisma } from "@prisma/client";
 
-async function getProducts(){
-  let products = await db.product.findMany({
+async function getInitialProducts(){
+  const products = await db.product.findMany({
        select:{
            title:true,
            price:true,
            created_at:true,
            photo:true,
            id:true,
+       },
+       take:5,
+       orderBy:{
+        created_at:"desc"
        }
   });
-
-  if (products.length === 0) {
-    await db.product.create({
-      data: {
-        title: "고구마",
-        price: 9999,
-        photo: "/goguma.jpg",
-        description: "악마",
-        user: {
-          connect: { id: 1 }
-        }
-      }
-    });
-
-    // 다시 가져오기
-    products = await db.product.findMany({
-       select:{
-           title:true,
-           price:true,
-           created_at:true,
-           photo:true,
-           id:true,
-       }
-    });
-  }
-
   return products;
 }
 
-
-
+export type InitialProducts = Prisma.PromiseReturnType<typeof getInitialProducts>;
 
 export default async function Product(){
-    const products = await getProducts();
+    const initialproducts = await getInitialProducts();
     return(
-  
         <div className="p-5 flex flex-col gap-5">
-           {products.length === 0 ? (
-        <p className="text-gray-500 text-center">등록된 상품이 없습니다.</p>
-      ) : (
-        products.map((product) => (
-          <ListProduct key={product.id} {...product} />
-        ))
-      )}
+          <ProductList initialproducts={initialproducts}/>
         </div>
     )
 }
