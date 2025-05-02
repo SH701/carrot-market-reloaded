@@ -1,37 +1,10 @@
-import db from "@/lib/db";
-import getSession from "@/lib/session";
 import { notFound } from "next/navigation";
 import {UserIcon} from "@heroicons/react/24/solid"
 import Link from "next/link";
 import { formatToWon } from "@/lib/utils";
 import Image from "next/image";
-import {DeletePro} from "../[id]/action"
-
-
-
-async function getIsOwner(userId:number){
-    const session = await getSession();
-    if(session.id){
-        return session.id === userId
-    }
-    return false;
-}
-async function getProduct(id:number){
-    const product = await db.product.findUnique({
-        where:{
-            id,
-        },
-        include:{
-            user:{
-                select:{
-                    username:true,
-                    avatar:true,
-                }
-            }
-        },
-    })
-    return product
-}
+import {DeletePro, getIsOwner, getProduct} from "../[id]/action"
+import { getPrevNextProducts } from "@/lib/product";
 
 export default async function ProductDetail({params}:{
     params:{id:string}
@@ -41,12 +14,28 @@ export default async function ProductDetail({params}:{
         return notFound()
     }
     const product = await getProduct(id);
+    const { prev: prevProduct, next: nextProduct } = await getPrevNextProducts(product!.created_at);
     if(!product){
         return notFound();
     }
     const IsOwner = await getIsOwner(product.userId)
     return (
         <div>
+           <div className="flex justify-between">
+        <Link
+      href={prevProduct? 
+                `/product/${prevProduct.id}`  // created_at 기준 이전 글이 있으면
+                : `/products`                  // 없으면 전체 목록으로
+                }
+                className="font-bold text-white">
+            ←</Link>
+        {nextProduct && (
+            <Link
+                href={`/product/${nextProduct.id}`}  // created_at 기준 다음 글
+                className="font-bold text-white">
+            →</Link>
+        )}
+        </div>
         <div className="relative aspect-square">
             <Image fill className="object-cover" src={product.photo} alt={product.title}/>
         </div>
