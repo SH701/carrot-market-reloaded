@@ -3,9 +3,23 @@ import {UserIcon} from "@heroicons/react/24/solid"
 import Link from "next/link";
 import { formatToWon } from "@/lib/utils";
 import Image from "next/image";
-import {DeletePro, getIsOwner, getProduct} from "../[id]/action"
+import {DeletePro, getIsOwner, getProduct, getProductTitle} from "../[id]/action"
 import { getPrevNextProducts } from "@/lib/product";
+import { unstable_cache as nextCache } from "next/cache";
 
+const getProductCache = nextCache(
+    getProduct,["product-detail"],{tags:["product-detail"]}
+)
+const getProductTitleCache = nextCache(
+    getProductTitle,["product-title"],{tags:["product-title"]}
+)
+export async function generateMetadata({ params }: { params: { id: string } }) {
+    const product = await getProductTitleCache(Number(params.id));
+    return {
+      title: product?.title,
+    };
+  }
+  
 export default async function ProductDetail({params}:{
     params:{id:string}
 }) {
@@ -13,8 +27,12 @@ export default async function ProductDetail({params}:{
     if(isNaN(id)){
         return notFound()
     }
-    const product = await getProduct(id);
-    const { prev: prevProduct, next: nextProduct } = await getPrevNextProducts(product!.created_at);
+    const product = await getProductCache(id);
+    if (!product) {
+        return notFound();
+      }
+    const imageId = product.photo.split("/")[4]; 
+    const { prev: prevProduct, next: nextProduct } = await getPrevNextProducts(product.created_at);
     if(!product){
         return notFound();
     }
@@ -22,22 +40,22 @@ export default async function ProductDetail({params}:{
     return (
         <div>
            <div className="flex justify-between">
-        <Link
-      href={prevProduct? 
-                `/product/${prevProduct.id}`  // created_at 기준 이전 글이 있으면
-                : `/products`                  // 없으면 전체 목록으로
-                }
-                className="font-bold text-white">
-            ←</Link>
-        {nextProduct && (
+           <Link
+                href={prevProduct ? `/product/${prevProduct.id}` : `/home`}
+                className="font-bold text-white"
+            >←</Link>
             <Link
-                href={`/product/${nextProduct.id}`}  // created_at 기준 다음 글
-                className="font-bold text-white">
-            →</Link>
-        )}
+                href={nextProduct ? `/product/${nextProduct.id}` : `/home`}
+                className="font-bold text-white"
+            >→</Link>
         </div>
         <div className="relative aspect-square">
-            <Image fill className="object-cover" src={product.photo} alt={product.title}/>
+        <Image
+            className="object-cover"
+            src={`https://imagedelivery.net/xHXPv5JYLiY7OumYcVqQRA/${imageId}/width=400,height=400`}
+            alt={product.title}
+           fill
+         />
         </div>
         <div className="py-5 px-3 flex items-center gap-3 
         border-b border-neutral-700">
@@ -55,14 +73,17 @@ export default async function ProductDetail({params}:{
                 )}
                 </div>
             <div >
-                <Link href="/profile">
-                    <h3 className="text-white font-semibold">
-                        {product.user.username}
-                    </h3>
-                    </Link>
+            <Link href={`/profile/${product.user.id}`}>
+                <h3 className="text-white font-semibold">
+                    {product.user.username}
+                </h3>
+            </Link>
+            {IsOwner ? (
+                    <Link href={`/product/${product.id}/edit`} className="text-red-500">편집하기</Link>
+            ):null}
             </div>
         </div>
-        <div className="py-3 px-3">
+        <div className="py-3 px-3 pb-24">
             <h1 className="text-2xl font-semibold py-1">{product.title}</h1>
             <p>{product.description}</p>
         </div>
@@ -82,5 +103,3 @@ export default async function ProductDetail({params}:{
         </div>
     );
   }
-  //만들어 볼만한것것
-  //1. 상대방 이름 누르면 그 사람 프로필로 가는거

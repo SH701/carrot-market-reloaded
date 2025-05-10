@@ -25,7 +25,7 @@ export default function RootLayout({
      <body
         className={`${inter.className} bg-gray-900 text-white antialiased h-full `}
         >
-          <main className="max-w-sm mx-auto min-h-screen">
+          <main className="max-w-md mx-auto min-h-screen bg-black">
         {children}
         </main>
       </body>

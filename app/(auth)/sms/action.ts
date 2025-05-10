@@ -52,7 +52,6 @@ async function getToken(){
 export async function loginSMS(prevState:ActionState,formData:FormData){
     const phone = formData.get("phone");
     const token = formData.get("token");
-    console.log("TO:", process.env.MY_PHONE_NUMBER);
 
     if(!prevState.token){
         const result = PhoneSchema.safeParse(phone)

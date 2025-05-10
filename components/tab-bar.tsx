@@ -5,6 +5,7 @@ import { HomeIcon as SolidHomeIcon ,
     ChatBubbleOvalLeftEllipsisIcon as SolidChatIcon, 
     VideoCameraIcon as SolidVideoCameraIcon,
     UserIcon as SolidUserIcon,
+    PlusIcon,
   } from "@heroicons/react/24/solid";
 import { HomeIcon as OutlineHomeIcon ,
     NewspaperIcon as OutlineNewspaperIcon,
@@ -19,10 +20,15 @@ export default function TabBar(){
     const pathname = usePathname();
 
     return (
-        <div className="fixed bottom-0 grid grid-cols-5 border-t 
-            border-neutral-600 px-5 py-3 *:text-white bg-neutral-800">
-            <Link href="/products" className="tab">
-            {pathname ==="/products" ?
+        <div className=" fixed left-1/2 transform -translate-x-1/2 bottom-0 grid grid-cols-5 
+        w-full max-w-md border-t border-neutral-600 px-5 py-3 *:text-white bg-neutral-800 ">
+        <Link className="fixed bottom-24 right-4 w-10 h-10 bg-orange-500 
+          rounded-full transition-colors hover:bg-orange-400" 
+          href="/add">
+            <PlusIcon className="size-18 text-white"/>
+          </Link>
+            <Link href="/home" className="tab">
+            {pathname ==="/home" ?
                 <SolidHomeIcon className="w-7 h-7"/>: 
                 <OutlineHomeIcon className="w-7 h-7"/>}
                 <span>홈</span>

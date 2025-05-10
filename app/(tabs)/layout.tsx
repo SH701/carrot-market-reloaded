@@ -1,9 +1,17 @@
 import TabBar from "@/components/tab-bar";
 
+export const dynamic = "force-dynamic";
 
-export default function Tablayout({children}:{children:React.ReactNode}){
-    return <div>
-        {children}
-        <TabBar/>
-    </div>
-}
+export default function TabsLayout({
+    children,
+  }: {
+    children: React.ReactNode;
+  }) {
+    return (
+      <>
+          {children}
+        <TabBar />
+      </>
+    );
+  }
+  

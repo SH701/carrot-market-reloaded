@@ -11,7 +11,7 @@ export async function DeletePro(formData: FormData){
         id: Number(id),
       },
     });
-    redirect("/products");
+    redirect("/home");
   };
 export async function getIsOwner(userId:number){
     const session = await getSession();
@@ -28,6 +28,7 @@ export async function getProduct(id:number){
         include:{
             user:{
                 select:{
+                    id:true,
                     username:true,
                     avatar:true,
                 }
@@ -35,4 +36,16 @@ export async function getProduct(id:number){
         },
     })
     return product
+}
+export async function getProductTitle(id:number){
+    console.log("title")
+    const product = await db.product.findUnique({
+        where:{
+            id,
+        },
+        select:{
+            title:true,
+        }
+    })
+    return product;
 }

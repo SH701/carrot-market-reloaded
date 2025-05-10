@@ -1,4 +1,3 @@
-// next.config.js
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
@@ -6,10 +5,17 @@ const nextConfig = {
       {
         protocol: 'https',
         hostname: 'avatars.githubusercontent.com',
-        port: '',
         pathname: '/u/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'imagedelivery.net',
+        pathname: '/**',
+      },
     ],
+  },
+  env: {
+    ACCOUNT_HASH: process.env.ACCOUNT_HASH, 
   },
 };
 
