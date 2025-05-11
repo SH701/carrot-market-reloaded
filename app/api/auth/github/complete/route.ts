@@ -70,5 +70,6 @@ export async function GET(request:NextRequest){
         select:{id:true},
     })
     await LoginSession(newUser)
-    redirect ("/profile")
+    return NextResponse.redirect(new URL("/profile", request.url));
+
 }
