@@ -3,9 +3,13 @@ import { EyeIcon,UserIcon } from "@heroicons/react/24/solid";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import getSession from "@/lib/session";
-import { getCachedLikeStatus, getCachedPost, increaseView } from "./actions";
+import { deletePost, getCachedLikeStatus, getCachedPost, increaseView } from "./actions";
 import LikeButton from "@/components/like-button";
 import CommentSection from "@/components/commentsection";
+import Link from "next/link";
+
+
+
 
 
 export default async function PostDetail({params}: {params: { id: string }}) {
@@ -19,6 +23,10 @@ export default async function PostDetail({params}: {params: { id: string }}) {
   const { likeCount, isLiked } = await getCachedLikeStatus(sessionId, id);
   
     return (
+      <>
+       <div>
+            <Link className="text-white font-bold px-4 text-lg" href="/life">←</Link>
+        </div> 
       <div className="p-5 text-white">
         <div className="flex items-center gap-2 mb-2">
         {post.user.avatar ? (
@@ -32,15 +40,22 @@ export default async function PostDetail({params}: {params: { id: string }}) {
           <UserIcon className="size-10 text-neutral-400 bg-neutral-800 rounded-full p-1 mr-1" />
           )}
           <div>
-            <span className="text-sm font-semibold">{post.user.username}</span>
+            <Link href={`/profile/${post.user.id}`} className="text-white text-sm font-semibold">{post.user.username}</Link>
             <div className="text-xs">
               <span>{formatToTime(post.created_at.toString())}</span>
             </div>
           </div>
+          <div className="ml-auto flex flex-row gap-4">
+            <Link href={`/posts/${post.id}/edit`} className="text-sky-500">수정</Link>
+           <form action={deletePost}>
+            <input type="hidden" name="id" value={post.id} />
+            <button type="submit" className="text-red-500">삭제</button>
+           </form>
+          </div>
         </div>
-        <h2 className="text-lg font-semibold">{post.title}</h2>
-        <p className="mb-5">{post.description}</p>
-        <div className="flex flex-col gap-5 items-start">
+        <h2 className="text-xl font-semibold py-5">{post.title}</h2>
+        <p className="mb-2">{post.description}</p>
+        <div className="flex flex-col gap-5 items-start pt-2">
           <div className="flex items-center gap-2 text-neutral-400 text-sm">
             <EyeIcon className="size-5" />
             <span>조회 {post.views}</span>
@@ -49,5 +64,6 @@ export default async function PostDetail({params}: {params: { id: string }}) {
         </div>
           <CommentSection postId={post.id}/>
       </div>
+      </>
     );
   }

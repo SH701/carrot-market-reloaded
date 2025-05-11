@@ -6,6 +6,10 @@ import Image from "next/image";
 import {DeletePro, getIsOwner, getProduct, getProductTitle} from "../[id]/action"
 import { getPrevNextProducts } from "@/lib/product";
 import { unstable_cache as nextCache } from "next/cache";
+import { createChatroom } from "@/app/(tabs)/chats/actions";
+import StatusChanger from "@/components/form";
+import getSession from "@/lib/session";
+
 
 const getProductCache = nextCache(
     getProduct,["product-detail"],{tags:["product-detail"]}
@@ -31,6 +35,7 @@ export default async function ProductDetail({params}:{
     if (!product) {
         return notFound();
       }
+    const session = await getSession();
     const imageId = product.photo.split("/")[4]; 
     const { prev: prevProduct, next: nextProduct } = await getPrevNextProducts(product.created_at);
     if(!product){
@@ -39,7 +44,7 @@ export default async function ProductDetail({params}:{
     const IsOwner = await getIsOwner(product.userId)
     return (
         <div>
-           <div className="flex justify-between">
+           <div className="flex justify-between pb-2">
            <Link
                 href={prevProduct ? `/product/${prevProduct.id}` : `/home`}
                 className="font-bold text-white"
@@ -49,12 +54,13 @@ export default async function ProductDetail({params}:{
                 className="font-bold text-white"
             >→</Link>
         </div>
-        <div className="relative aspect-square">
+        <div className="relative w-100 h-68">
         <Image
             className="object-cover"
             src={`https://imagedelivery.net/xHXPv5JYLiY7OumYcVqQRA/${imageId}/width=400,height=400`}
             alt={product.title}
-           fill
+            width={460}
+            height={288}
          />
         </div>
         <div className="py-5 px-3 flex items-center gap-3 
@@ -72,7 +78,7 @@ export default async function ProductDetail({params}:{
                     <UserIcon/>
                 )}
                 </div>
-            <div >
+            <div>
             <Link href={`/profile/${product.user.id}`}>
                 <h3 className="text-white font-semibold">
                     {product.user.username}
@@ -82,6 +88,11 @@ export default async function ProductDetail({params}:{
                     <Link href={`/product/${product.id}/edit`} className="text-red-500">편집하기</Link>
             ):null}
             </div>
+            <StatusChanger
+            currentStatus={product.status}
+            productId={product.id}
+            isOwner={session?.id === product.userId}
+            />
         </div>
         <div className="py-3 px-3 pb-24">
             <h1 className="text-2xl font-semibold py-1">{product.title}</h1>
@@ -97,9 +108,13 @@ export default async function ProductDetail({params}:{
                     <button className="bg-red-500 text-white px-5 py-2.5 rounded-md">삭제하기</button>
                 </form>
             ) : null}
-            <Link className="bg-orange-500 text-white px-5 py-2.5 rounded-md" href="/chats">채팅하기</Link>
+            <form action={createChatroom}>
+            <input type="hidden" name="productId" value={product.id} />
+            <button className="bg-orange-500 text-white px-5 py-2.5 rounded-md" >채팅하기</button>
+            </form>
             </div>
         </div>
         </div>
+        
     );
   }

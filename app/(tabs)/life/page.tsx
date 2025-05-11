@@ -1,7 +1,8 @@
 import db from "@/lib/db";
 import { formatToTime } from "@/lib/utils";
-import { ChatBubbleBottomCenterIcon, HandThumbUpIcon } from "@heroicons/react/24/solid";
+import { ChatBubbleBottomCenterIcon, HandThumbUpIcon, PlusIcon, UserIcon } from "@heroicons/react/24/solid";
 import Link from "next/link";
+import Image from "next/image"
 
 async function getPosts() {
   const posts = await db.post.findMany({
@@ -11,6 +12,12 @@ async function getPosts() {
       description: true,
       views: true,
       created_at: true,
+      user:{
+        select:{
+          username:true,
+          avatar:true,
+        },
+      },
       _count: {
         select: {
           comments: true,
@@ -36,6 +43,20 @@ export default async function Life() {
           href={`/posts/${post.id}`}
           className="block border border-neutral-800 p-4 rounded-md bg-neutral-900 hover:bg-neutral-800 transition"
         >
+          <div className="flex flex-row gap-3 pb-3">
+           {post.user?.avatar ? (
+          <Image
+            src={post.user.avatar}
+            width={40}
+            height={40}
+            alt="user avatar"
+            className="rounded-full"
+          />
+        ) : (
+          <UserIcon className="w-10 h-10 text-white rounded-full bg-neutral-500" />
+        )}
+          <p className="text-white pt-1.5">{post.user.username}</p>
+          </div>
           <h2 className="text-white text-lg font-semibold">{post.title}</h2>
           <p className="text-sm text-neutral-300 mt-1">{post.description}</p>
           <div className="flex items-center justify-between text-sm mt-3">
@@ -57,6 +78,15 @@ export default async function Life() {
           </div>
         </Link>
       ))}
+        <div className="flex justify-end mb-4  ">
+        <Link
+          href="/posts/add"
+          className="flex items-center gap-1 p-2 bg-orange-500 hover:bg-orange-400 text-white rounded-md transition"
+        >
+          <PlusIcon className="size-5" />
+          글쓰기
+        </Link>
+      </div>
     </div>
   );
 }

@@ -5,7 +5,7 @@ export default function Home() {
   return (
    <div className="flex flex-col items-center justify-between
    min-h-screen">
-    <div className="my-auto *:font-medium flex flex-col items-center gap-2">
+    <div className="my-auto *:font-medium flex flex-col items-center gap-4">
       <span className="text-9xl">🥕</span>
       <h1 className="text-5xl">안녕!</h1>
       <h2 className="text-xl">당근 마켓에 어서오세요!</h2>

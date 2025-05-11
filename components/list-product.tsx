@@ -23,10 +23,10 @@ export default function ListProduct({id,title,price,photo,created_at,}: ListProd
           unoptimized                       
         />
         </div>
-        <div className="flex flex-col gap-1 *:text-white">
-            <span className="text-lg">{title}</span>
-            <span className="text-sm text-neutral-500">{formatToTime(created_at.toString())}</span>
-            <span className="text-lg font-semibold">{formatToWon(price)}원</span>
+        <div className="flex flex-col gap-1">
+            <span className="text-lg text-white">{title}</span>
+            <span className="text-xs text-neutral-500">{formatToTime(created_at.toString())}</span>
+            <span className="text-md font-semibold text-white">{formatToWon(price)}원</span>
         </div>
     </Link>
   );

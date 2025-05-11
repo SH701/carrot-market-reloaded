@@ -1,7 +1,7 @@
 "use client"
 
-import {HandThumbUpIcon as SolidHandThumbUpIcon} from "@heroicons/react/24/solid"
-import {HandThumbUpIcon as OutlineHandThumbUpIcon} from "@heroicons/react/24/outline"
+import {HeartIcon as SolidHeartIcon} from "@heroicons/react/24/solid"
+import {HeartIcon as OutlineHeartIcon} from "@heroicons/react/24/outline"
 import { useOptimistic } from "react";
 import { dislikePost, likePost } from "@/app/posts/[id]/actions";
 
@@ -39,14 +39,14 @@ export default function LikeButton({isLiked,likeCount,postId}:LikeButtonProps){
               : "hover:bg-neutral-800"
           }`}>
             {state.isLiked ? (
-            <SolidHandThumbUpIcon className="size-5" />
+            <SolidHeartIcon className="size-5" />
           ) : (
-            <OutlineHandThumbUpIcon className="size-5" />
+            <OutlineHeartIcon className="size-5" />
           )}
           {state.isLiked ? (
             <span> {state.likeCount}</span>
           ) : (
-            <span>공감하기 ({state.likeCount})</span>
+            <span>{state.likeCount}</span>
           )}
           </button>
     )

@@ -53,7 +53,7 @@ export default function ProductList({ initialproducts }: ProductListProps) {
           <ListProduct key={product.id} {...product} />
         ))
       )}
-      {/* {!isLastPage && (
+      {!isLastPage && (
         <span
           ref={triggerRef}
           className="mx-auto px-4 py-2 bg-orange-500 text-white rounded-md
@@ -61,7 +61,7 @@ export default function ProductList({ initialproducts }: ProductListProps) {
         >
           {isLoading ? "Loading..." : "Load more"}
         </span>
-      )} */}
+      )}
     </div>
   );
 }

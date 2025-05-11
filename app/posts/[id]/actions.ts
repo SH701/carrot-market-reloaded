@@ -3,6 +3,7 @@
 import db from "@/lib/db";
 import getSession from "@/lib/session";
 import { unstable_cache as nextCache, revalidateTag } from "next/cache";
+import { redirect } from "next/navigation";
 
 
 export async function increaseView(id: number) {
@@ -28,6 +29,7 @@ export async function getPost(id: number) {
               select: {
                 username: true,
                 avatar: true,
+                id:true,
               },
             },
             comments: {
@@ -51,17 +53,29 @@ export async function getPost(id: number) {
             },
           },
         });
-        console.log("getPost by ID : ", id);
-        console.log(post.comments);
         return post;
       }
-
-
 export const getCachedPost = nextCache(
   getPost,
   [],
   { tags: ["post-detail"]}
 );
+export async function deletePost(formData: FormData) {
+  const id = Number(formData.get("id"));
+  const session = await getSession();
+  const sessionId = Number(session.id);
+
+  const post = await db.post.findUnique({
+    where: { id },
+    select: { userId: true },
+  });
+  if (!post || post.userId !== sessionId) {
+    throw new Error("삭제 권한 없음");
+  }
+  await db.post.delete({ where: { id } });
+  redirect("/life")
+}
+
 async function getLikeStatus(sessionId: number, postId: number) {
   const liked = await db.like.findUnique({
     where: { id: { postId, userId: sessionId } },
