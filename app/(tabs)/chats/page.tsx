@@ -23,8 +23,9 @@ export default function Chats() {
     const lower = keyword.toLowerCase();
     const filteredRooms = rooms.filter((room) => {
       const otherUser = room.users.find(
-        (u) => u.id !== room.messages[0]?.userId
-      );
+  (u: { id: number; username: string; avatar?: string }) =>
+    u.id !== room.messages[0]?.userId
+);
       return otherUser?.username?.toLowerCase().includes(lower);
     });
     setFiltered(filteredRooms);
@@ -41,9 +42,10 @@ export default function Chats() {
       />
 
       {filtered.map((room) => {
-        const otherUser = room.users.find(
-          (u) => u.id !== room.messages[0]?.userId
-        );
+       const otherUser = room.users.find(
+  (u: { id: number; username: string; avatar?: string }) =>
+    u.id !== room.messages[0]?.userId
+);
         return (
           <div key={room.id} className="w-full">
             <Link

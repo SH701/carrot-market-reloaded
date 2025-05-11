@@ -23,7 +23,7 @@ interface Props{
 export default function ChatMessage({initialmessages,userId,chatRoomId,avatar,username}:Props){
   const [messages, setMessages] = useState(initialmessages);
   const [message, setMessage] = useState("");
-  const channel = useRef<RealtimeChannel>();
+  const channel = useRef<RealtimeChannel|null>(null);
   const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const {target: { value },} = event;
     setMessage(value);

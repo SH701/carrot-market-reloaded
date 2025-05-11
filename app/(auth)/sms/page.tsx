@@ -17,11 +17,11 @@ export default function SMSLogin(){
     const router = useRouter();
 
     useEffect(() => {
-        if (state.success) {
+        if (state.token) {
           alert("You are now logged in.");
           router.push("/");
         }
-      }, [state.success, router]);
+      }, [state.token, router]);
     return(
         <div className="flex flex-col gap-10 py-8 px-6">
             <div className="flex flex-col gap-2 *:font-medium">

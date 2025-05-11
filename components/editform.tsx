@@ -5,7 +5,7 @@ import { useFormState } from "react-dom";
 
 
 export default function EditForm() {
-  const [state, formAction] = useFormState(ProfileEdit, { error: null });
+  const [state, formAction] = useFormState(ProfileEdit, { error: "" });
 
   return (
     <form action={formAction}>
